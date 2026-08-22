@@ -3,229 +3,73 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="5つの質問からあなたのいいところを診断します">
   <title>あなたのいいところ診断</title>
-  <style>
-    :root {
-      --primary-color: #4a90e2;
-      --accent-color: #ff6b6b;
-      --bg-color: #f7f9fc;
-      --card-bg: #ffffff;
-      --text-color: #333333;
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
-    }
-
-    body {
-      background-color: var(--bg-color);
-      color: var(--text-color);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      padding: 20px;
-    }
-
-    .container {
-      background-color: var(--card-bg);
-      padding: 30px;
-      border-radius: 16px;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
-      max-width: 500px;
-      width: 100%;
-      text-align: center;
-    }
-
-    h1 {
-      font-size: 1.8rem;
-      margin-bottom: 10px;
-      color: var(--primary-color);
-    }
-
-    p.description {
-      font-size: 0.95rem;
-      color: #666;
-      margin-bottom: 25px;
-    }
-
-    .input-group {
-      margin-bottom: 20px;
-    }
-
-    input[type="text"] {
-      width: 100%;
-      padding: 12px 15px;
-      font-size: 1rem;
-      border: 2px solid #e0e0e0;
-      border-radius: 8px;
-      outline: none;
-      transition: border-color 0.3s;
-    }
-
-    input[type="text"]:focus {
-      border-color: var(--primary-color);
-    }
-
-    button {
-      width: 100%;
-      padding: 12px;
-      font-size: 1rem;
-      font-weight: bold;
-      color: #fff;
-      background-color: var(--primary-color);
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: background-color 0.2s, transform 0.1s;
-    }
-
-    button:hover {
-      background-color: #357abd;
-    }
-
-    button:active {
-      transform: scale(0.98);
-    }
-
-    .result-area {
-      margin-top: 30px;
-      padding-top: 20px;
-      border-top: 2px dashed #e0e0e0;
-      display: none;
-    }
-
-    .result-area.active {
-      display: block;
-      animation: fadeIn 0.5s ease;
-    }
-
-    .result-title {
-      font-size: 1.2rem;
-      font-weight: bold;
-      margin-bottom: 15px;
-    }
-
-    .result-body {
-      background-color: #f0f7ff;
-      padding: 20px;
-      border-radius: 8px;
-      font-size: 1.1rem;
-      line-height: 1.6;
-      color: #2c3e50;
-      margin-bottom: 20px;
-    }
-
-    .share-btn {
-      background-color: #000000;
-      color: #fff;
-      text-decoration: none;
-      display: inline-block;
-      padding: 10px 20px;
-      border-radius: 6px;
-      font-size: 0.9rem;
-      font-weight: bold;
-      transition: opacity 0.2s;
-    }
-
-    .share-btn:hover {
-      opacity: 0.8;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-  </style>
+  <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
+  <main class="app">
 
-  <div class="container">
-    <h1>あなたのいいところ診断</h1>
-    <p class="description">名前を入力すると、あなたの素敵なところを診断します！</p>
-    
-    <div class="input-group">
-      <input type="text" id="user-name" placeholder="お名前を入力してください" maxlength="20">
-    </div>
-    
-    <button id="diagnose-btn">診断する</button>
+    <!-- スタート画面 -->
+    <section id="start-screen" class="screen active">
+      <div class="icon">✨</div>
+      <p class="label">PERSONALITY CHECK</p>
+      <h1>あなたの<br><span>いいところ診断</span></h1>
+      <p class="description">
+        5つの質問に答えるだけで、<br>
+        あなたの魅力を診断します。
+      </p>
 
-    <div class="result-area" id="result-area">
-      <div class="result-title">診断結果</div>
-      <div class="result-body" id="result-text"></div>
-      <a href="#" id="share-x" class="share-btn" target="_blank" rel="noopener noreferrer">Xで結果を共有</a>
-    </div>
-  </div>
+      <button id="start-btn" class="main-btn">
+        診断をはじめる
+        <span>→</span>
+      </button>
+    </section>
 
-  <script>
-    const userNameInput = document.getElementById('user-name');
-    const diagnoseBtn = document.getElementById('diagnose-btn');
-    const resultArea = document.getElementById('result-area');
-    const resultText = document.getElementById('result-text');
-    const shareX = document.getElementById('share-x');
+    <!-- 質問画面 -->
+    <section id="quiz-screen" class="screen">
+      <div class="quiz-header">
+        <span id="question-number">QUESTION 1 / 5</span>
+        <span id="progress-percent">20%</span>
+      </div>
 
-    const answers = [
-      '{name}のいいところは「情熱」です。情熱的な{name}の行動に周りの人は引き込まれ、刺激を受けています。',
-      '{name}のいいところは「まなざし」です。{name}に見つめられた人は、気まずくも心地よい感覚を覚えます。',
-      '{name}のいいところは「厳しさ」です。{name}の決断にいつも助けられている人がいます。',
-      '{name}のいいところは「知識」です。博識な{name}を多くの人が頼りにしています。',
-      '{name}のいいところは「ユニークさ」です。{name}だけの視点や発想が、場をいつも和ませます。',
-      '{name}のいいところは「用心深さ」です。{name}の細やかな配慮が、多くのトラブルを未然に防いでいます。',
-      '{name}のいいところは「見た目」です。内面から溢れ出る品格が、{name}の魅力を一層惹き立てています。',
-      '{name}のいいところは「決断力」です。{name}の素早い判断にいつも助けられている人がいます。',
-      '{name}のいいところは「優しさ」です。{name}のさりげない気配りに、多くの人が救われています。',
-      '{name}のいいところは「感受性」です。{name}が感じたことを言葉にすることで、周りの人が気づかされることがあります。',
-      '{name}のいいところは「節度」です。強引すぎない{name}の考え方に、多くの人が感謝しています。',
-      '{name}のいいところは「好奇心」です。新しいことに挑戦し続ける{name}の姿は、周囲に勇気を与えています。',
-      '{name}のいいところは「気配り」です。{name}の配慮のおかげで、いつもみんなが安心して過ごせています。',
-      '{name}のいいところは「声」です。{name}の落ち着いた声には、聞く人を安心させる特別な力があります。',
-      '{name}のいいところは「実行力」です。考えを形にできる{name}の行動力を、皆が尊敬しています。'
-    ];
+      <div class="progress">
+        <div id="progress-bar"></div>
+      </div>
 
-    /**
-     * 名前の文字コードの総和をもとに診断結果のインデックスを計算する関数
-     * @param {string} userName 
-     * @returns {number}
-     */
-    function getAssessmentIndex(userName) {
-      let sumOfCharCode = 0;
-      for (let i = 0; i < userName.length; i++) {
-        sumOfCharCode += userName.charCodeAt(i);
-      }
-      return sumOfCharCode % answers.length;
-    }
+      <div class="question-box">
+        <p class="question-label">QUESTION</p>
+        <h2 id="question-text"></h2>
+      </div>
 
-    function diagnose() {
-      const userName = userNameInput.value.trim();
-      
-      if (userName.length === 0) {
-        alert('名前を入力してください！');
-        return;
-      }
+      <div id="answers" class="answers"></div>
+    </section>
 
-      const index = getAssessmentIndex(userName);
-      let result = answers[index];
-      result = result.replace(/{name}/g, userName);
+    <!-- 結果画面 -->
+    <section id="result-screen" class="screen">
+      <p class="label">YOUR RESULT</p>
+      <div id="result-icon" class="result-icon">✨</div>
 
-      resultText.innerText = result;
-      resultArea.classList.add('active');
+      <p>あなたのいいところは</p>
+      <h1 id="result-title"></h1>
 
-      // X (Twitter) 共有リンクの設定
-      const shareUrl = encodeURIComponent(window.location.href);
-      const shareText = encodeURIComponent(`${result}\n#あなたのいいところ診断\n`);
-      shareX.href = `https://x.com/intent/tweet?text=${shareText}&url=${shareUrl}`;
-    }
+      <div class="result-card">
+        <p id="result-description"></p>
+      </div>
 
-    diagnoseBtn.addEventListener('click', diagnose);
+      <button id="retry-btn" class="main-btn">
+        もう一度診断する
+        <span>↻</span>
+      </button>
+    </section>
 
-    userNameInput.addEventListener('keydown', (event) => {
-      if (event.key === 'Enter') {
-        diagnose();
-      }
-    });
-  </script>
+  </main>
+
+  <footer>
+    <p>あなたの魅力は、あなたにしかない。</p>
+  </footer>
+
+  <script src="script.js"></script>
 </body>
 </html>
